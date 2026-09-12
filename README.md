@@ -26,6 +26,7 @@ Open `http://localhost:8765/?replay=1` to run offline from fixtures.
 | `k` | force key change |
 | `t` | text on/off |
 | `h` | hide/show stats |
+| `x` / `Esc` | open / close the mixer drawer (key, scale, lock, tempo, per-voice instrument, level, mute) |
 
 ## Deploy
 

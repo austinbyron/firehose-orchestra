@@ -89,7 +89,7 @@ export class Visual {
     for (const t of this.texts) {
       const ix = Math.max(0, Math.min(x + w, t.x + t.w) - Math.max(x, t.x));
       const iy = Math.max(0, Math.min(y + h, t.y + t.h) - Math.max(y, t.y));
-      if (ix * iy > 0.5 * w * h) return true;
+      if (ix * iy > 0.1 * Math.min(w * h, t.w * t.h)) return true;
     }
     return false;
   }

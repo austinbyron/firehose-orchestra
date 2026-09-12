@@ -17,15 +17,37 @@
   #stats { position: fixed; left: 12px; bottom: 12px; opacity: 0.7; white-space: pre; z-index: 1;
     transition: opacity 0.4s; pointer-events: none; }
   #stats.hidden { opacity: 0; }
+  #mixToggle { position: fixed; right: 12px; bottom: 12px; opacity: 0.55; cursor: pointer; z-index: 3;
+    background: none; border: 1px solid #cfd6e4; color: #cfd6e4; font: inherit; padding: 4px 10px; letter-spacing: 0.1em; }
+  #mixToggle:hover { opacity: 1; }
+  #mixer { position: fixed; top: 0; right: 0; height: 100%; width: min(360px, 100vw); box-sizing: border-box;
+    padding: 18px 18px 60px; overflow-y: auto; z-index: 2; background: rgba(6, 8, 13, 0.82);
+    backdrop-filter: blur(6px); border-left: 1px solid rgba(207, 214, 228, 0.15);
+    transform: translateX(100%); transition: transform 0.25s ease; }
+  #mixer.open { transform: none; }
+  #mixer h2 { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.6; margin: 18px 0 8px; }
+  #mixer h2:first-child { margin-top: 0; }
+  #mixer .row { display: grid; grid-template-columns: 62px 1fr 46px; gap: 8px; align-items: center; margin: 6px 0; }
+  #mixer .slider { display: grid; grid-template-columns: 1fr 38px; gap: 6px; align-items: center; }
+  #mixer .row.type { grid-template-columns: 62px 84px 1fr 46px; }
+  #mixer label { opacity: 0.8; }
+  #mixer select, #mixer button { font: inherit; color: #cfd6e4; background: rgba(207, 214, 228, 0.06);
+    border: 1px solid rgba(207, 214, 228, 0.25); padding: 3px 6px; }
+  #mixer button.on { background: #cfd6e4; color: #06080d; }
+  #mixer input[type=range] { width: 100%; accent-color: #cfd6e4; }
+  #mixer .val { opacity: 0.6; text-align: right; font-size: 11px; white-space: nowrap; }
+  #mixer .actions { display: flex; gap: 8px; margin-top: 18px; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
 <div id="play">
   <button id="playBtn">Play</button>
-  <p>the bluesky firehose as music. m mute · f fullscreen · [ ] tempo · k key · t text · h stats</p>
+  <p>the bluesky firehose as music. m mute · f fullscreen · [ ] tempo · k key · t text · h stats · x mixer</p>
 </div>
 <div id="stats"></div>
+<button id="mixToggle" hidden>mix</button>
+<aside id="mixer"></aside>
 <script type="module" src="src/main.js"></script>
 </body>
 </html>
