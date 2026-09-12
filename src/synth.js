@@ -63,6 +63,10 @@ export class Drone {
     });
   }
 
+  setLevel(v) {
+    this.gain.gain.setTargetAtTime(0.14 * v, this.ctx.currentTime, 0.1);
+  }
+
   setBrightness(b) {
     this.brightness = b;
     const hz = 250 + Math.pow(b, 1.5) * 2800;
@@ -131,6 +135,33 @@ export class Synth {
     osc.start(when);
     osc.stop(when + dur + 0.05);
     osc.onended = () => { osc.disconnect(); f.disconnect(); g.disconnect(); p.disconnect(); };
+  }
+
+  // Bell: sine fundamental + inharmonic partial, long decay.
+  bell({ when, midi, dur = 1.6, pan = 0, gain = 0.12 }) {
+    const ctx = this.ctx;
+    const hz = midiToHz(midi);
+    const o1 = ctx.createOscillator();
+    o1.type = 'sine';
+    o1.frequency.value = hz;
+    const o2 = ctx.createOscillator();
+    o2.type = 'sine';
+    o2.frequency.value = hz * 2.76;
+    const g1 = ctx.createGain();
+    const g2 = ctx.createGain();
+    g1.gain.setValueAtTime(0, when);
+    g1.gain.linearRampToValueAtTime(gain, when + 0.004);
+    g1.gain.exponentialRampToValueAtTime(0.0005, when + dur);
+    g2.gain.setValueAtTime(0, when);
+    g2.gain.linearRampToValueAtTime(gain * 0.35, when + 0.004);
+    g2.gain.exponentialRampToValueAtTime(0.0005, when + dur * 0.4);
+    const p = panner(ctx, pan);
+    o1.connect(g1).connect(p);
+    o2.connect(g2).connect(p);
+    p.connect(this.bus);
+    o1.start(when); o2.start(when);
+    o1.stop(when + dur + 0.05); o2.stop(when + dur + 0.05);
+    o1.onended = () => { o1.disconnect(); o2.disconnect(); g1.disconnect(); g2.disconnect(); p.disconnect(); };
   }
 
   tick({ when, pan = 0, gain = 0.07 }) {
