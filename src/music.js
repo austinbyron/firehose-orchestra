@@ -9,11 +9,20 @@ export function fnv1a(str) {
   return h >>> 0;
 }
 
-export const SCALE = [0, 2, 4, 7, 9];
+export const SCALES = {
+  'major pentatonic': [0, 2, 4, 7, 9],
+  'minor pentatonic': [0, 3, 5, 7, 10],
+  dorian: [0, 2, 3, 5, 7, 9, 10],
+  mixolydian: [0, 2, 4, 5, 7, 9, 10],
+  'whole tone': [0, 2, 4, 6, 8, 10],
+  blues: [0, 3, 5, 6, 7, 10],
+};
+export const SCALE = SCALES['major pentatonic'];
+export const KEY_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
-export function pitchFor(did, keyRoot, { octaveLow = 3, octaveSpan = 3 } = {}) {
+export function pitchFor(did, keyRoot, { octaveLow = 3, octaveSpan = 3, scale = SCALE } = {}) {
   const h = fnv1a(did);
-  const degree = SCALE[h % SCALE.length];
+  const degree = scale[h % scale.length];
   const octave = octaveLow + ((h >>> 8) % octaveSpan);
   return 12 * (octave + 1) + ((keyRoot + degree) % 12);
 }
