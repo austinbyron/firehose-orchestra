@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  fnv1a, SCALE, pitchFor, midiToHz, noteLengthFor, langInfo, chordAt, CHORDS,
+  fnv1a, SCALE, SCALES, KEY_NAMES, pitchFor, midiToHz, noteLengthFor, langInfo, chordAt, CHORDS,
   Ema, RateTracker, createBurstDetector, nextKey, applyCaps, CAPS,
 } from '../src/music.js';
 
@@ -113,4 +113,20 @@ test('applyCaps limits per type and counts drops', () => {
   assert.equal(count('follow'), 1);
   assert.equal(count('post'), 1);
   assert.equal(dropped, 12 + 1 + 1);
+});
+
+test('SCALES are sorted semitone sets starting at 0; KEY_NAMES has 12', () => {
+  for (const [name, sc] of Object.entries(SCALES)) {
+    assert.equal(sc[0], 0, name);
+    for (let i = 1; i < sc.length; i++) assert.ok(sc[i] > sc[i - 1] && sc[i] < 12, name);
+  }
+  assert.equal(KEY_NAMES.length, 12);
+});
+
+test('pitchFor honors a custom scale', () => {
+  const wt = SCALES['whole tone'];
+  for (const did of ['did:plc:a', 'did:plc:b', 'did:plc:c', 'did:plc:d']) {
+    const m = pitchFor(did, 2, { scale: wt });
+    assert.ok(wt.includes((m - 2 + 120) % 12), `${did} -> ${m}`);
+  }
 });
