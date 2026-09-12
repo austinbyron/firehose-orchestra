@@ -1,0 +1,10 @@
+{
+  "name": "firehose-orchestra",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/",
+    "record": "node tools/record-fixtures.mjs",
+    "serve": "python3 -m http.server 8765"
+  }
+}
