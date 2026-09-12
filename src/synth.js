@@ -27,7 +27,7 @@ export class Drone {
     this.filter.frequency.value = 600;
     this.filter.Q.value = 0.7;
     this.gain = ctx.createGain();
-    this.gain.gain.value = 0.18;
+    this.gain.gain.value = 0.14;
     this.filter.connect(this.gain).connect(out);
     this.voices = [];
     const waves = ['sawtooth', 'triangle', 'sawtooth', 'triangle'];
@@ -111,7 +111,7 @@ export class Synth {
 
   setWet(w) { this.wet.gain.setTargetAtTime(0.15 + 0.5 * w, this.ctx.currentTime, 1); }
 
-  pluck({ when, midi, dur, pan = 0, timbre = 0.5, gain = 0.25 }) {
+  pluck({ when, midi, dur, pan = 0, timbre = 0.5, gain = 0.16 }) {
     const ctx = this.ctx;
     const hz = midiToHz(midi);
     const osc = ctx.createOscillator();
@@ -133,7 +133,7 @@ export class Synth {
     osc.onended = () => { osc.disconnect(); f.disconnect(); g.disconnect(); p.disconnect(); };
   }
 
-  tick({ when, pan = 0, gain = 0.12 }) {
+  tick({ when, pan = 0, gain = 0.07 }) {
     const ctx = this.ctx;
     const src = ctx.createBufferSource();
     src.buffer = this.noise();
@@ -150,7 +150,7 @@ export class Synth {
     src.onended = () => { src.disconnect(); f.disconnect(); g.disconnect(); p.disconnect(); };
   }
 
-  rim({ when, pan = 0, gain = 0.3 }) {
+  rim({ when, pan = 0, gain = 0.2 }) {
     const ctx = this.ctx;
     const osc = ctx.createOscillator();
     osc.type = 'sine';
@@ -167,7 +167,7 @@ export class Synth {
     this.tick({ when, pan, gain: gain * 0.6 });
   }
 
-  swell({ when, pan = 0, gain = 0.2 }) {
+  swell({ when, pan = 0, gain = 0.14 }) {
     const ctx = this.ctx;
     const osc = ctx.createOscillator();
     osc.type = 'sine';
