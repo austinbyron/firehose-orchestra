@@ -32,3 +32,5 @@ Open `http://localhost:8765/?replay=1` to run offline from fixtures.
     ./deploy.sh
 
 Cloudflare Pages direct upload, project `firehose-orchestra`.
+
+Live: https://firehose-orchestra.pages.dev
