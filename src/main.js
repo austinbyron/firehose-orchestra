@@ -101,7 +101,8 @@ function onTick(scheduled, when, step, dropped) {
   for (const e of scheduled) {
     const info = langInfo(e.lang);
     // language picks a sector; the account picks a stable spot inside it
-    const jitter = ((fnv1a(e.did) % 1000) / 1000 - 0.5) * 0.9;
+    const spread = e.lang === 'en' ? 2.6 : 0.9; // english dominates, give it the wide arc
+    const jitter = ((fnv1a(e.did) % 1000) / 1000 - 0.5) * spread;
     const angle = info.pan * Math.PI * 0.75 - Math.PI / 2 + jitter;
     const hue = info.hue;
     switch (e.type) {
