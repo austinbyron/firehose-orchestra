@@ -3,7 +3,6 @@ import { wrapText } from './filter.js';
 export const RING_BY_TYPE = { post: 0.42, reply: 0.42, repost: 0.34, follow: 0.28, like: 0.2 };
 
 const MAX_PULSES = 400;
-const MAX_TEXTS = 12;
 const TEXT_LIFE_MS = 4000;
 const PULSE_LIFE_MS = 600;
 
@@ -19,6 +18,7 @@ export class Visual {
     this.flashUntil = 0;
     this.dim = false;
     this.textEnabled = true;
+    this.maxTexts = coarse ? 6 : 12;
     this.audioOffsetMs = 0;
     this.raf = null;
     this.resize();
@@ -46,6 +46,7 @@ export class Visual {
   setBrightness(b) { this.brightness = b; }
   setDim(d) { this.dim = d; }
   setTextEnabled(on) { this.textEnabled = on; if (!on) this.texts.length = 0; }
+  setMaxTexts(n) { this.maxTexts = n; if (this.texts.length > n) this.texts.splice(0, this.texts.length - n); }
   get liveTextCount() { return this.texts.length; }
   flash() { this.flashUntil = performance.now() + 250; }
 
@@ -61,10 +62,12 @@ export class Visual {
   }
 
   text({ str, angle, hue, at }) {
-    if (!this.textEnabled || this.texts.length >= MAX_TEXTS) return false;
-    const lines = wrapText(str, this.coarse ? 26 : 34);
+    if (!this.textEnabled || this.texts.length >= this.maxTexts) return false;
+    const lines = wrapText(str, this.coarse ? 24 : 34);
     const font = this.coarse ? 13 : 15;
-    const boxW = Math.max(...lines.map((l) => l.length)) * font * 0.6;
+    this.ctx.font = `${font}px ui-monospace, Menlo, monospace`;
+    const boxW = Math.max(...lines.map((l) => this.ctx.measureText(l).width));
+    if (boxW > this.w - 16) return false;
     const boxH = lines.length * font * 1.35;
     const r = RING_BY_TYPE.post * this.base;
     for (let k = 0; k < 8; k++) {
@@ -154,16 +157,16 @@ export class Visual {
       c.fillStyle = `hsla(${t.hue} 70% 85% / ${0.95 * fade})`;
       let remaining = shown;
       let caretLine = -1;
-      let caretCol = 0;
+      let caretX = 0;
       t.lines.forEach((line, i) => {
         if (remaining < 0) return;
         const part = line.slice(0, Math.max(0, remaining));
-        if (caretLine < 0 && remaining <= line.length) { caretLine = i; caretCol = remaining; }
+        if (caretLine < 0 && remaining <= line.length) { caretLine = i; caretX = c.measureText(part).width; }
         remaining -= line.length + 1;
         c.fillText(part, t.x, t.y + i * t.font * 1.35);
       });
       if (shown < t.total && caretLine >= 0 && Math.floor(now / 250) % 2 === 0) {
-        c.fillRect(t.x + caretCol * t.font * 0.6, t.y + caretLine * t.font * 1.35, t.font * 0.55, t.font * 1.1);
+        c.fillRect(t.x + caretX, t.y + caretLine * t.font * 1.35, t.font * 0.55, t.font * 1.1);
       }
     }
     this.texts = keepT;
