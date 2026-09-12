@@ -1,0 +1,143 @@
+{
+  "pass": [
+    {
+      "text": "finally got the sourdough starter to rise, feeling unstoppable",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "text": "the light on the bay this morning was unreal. no photo could do it",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "text": "hot take: the second album is the good one",
+      "langs": [
+        "en",
+        "fr"
+      ]
+    }
+  ],
+  "block": [
+    {
+      "reason": "label",
+      "text": "new set is up, link below",
+      "langs": [
+        "en"
+      ],
+      "labels": {
+        "$type": "com.atproto.label.defs#selfLabels",
+        "values": [
+          {
+            "val": "porn"
+          }
+        ]
+      }
+    },
+    {
+      "reason": "embed",
+      "text": "look at this photo of my dog being a good boy today",
+      "langs": [
+        "en"
+      ],
+      "embed": {
+        "$type": "app.bsky.embed.images",
+        "images": []
+      }
+    },
+    {
+      "reason": "lang",
+      "text": "hoje o dia está lindo demais, vamos aproveitar",
+      "langs": [
+        "pt"
+      ]
+    },
+    {
+      "reason": "url",
+      "text": "read my new post at https://example.com/blog it is good",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "reason": "url",
+      "text": "check out example.com/deal before it expires tonight",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "reason": "hashtags",
+      "text": "good morning #art #artist #drawing everyone",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "reason": "mentions",
+      "text": "hey @a.bsky.social and @b.bsky.social come look",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "reason": "short",
+      "text": "lol ok",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "reason": "long",
+      "text": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "reason": "shouty",
+      "text": "THIS IS THE BEST DAY OF MY ENTIRE LIFE AND I AM SCREAMING",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "reason": "symbols",
+      "text": "🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 !!!",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "reason": "blocklist",
+      "text": "new nsfw drop for my subscribers this weekend",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "reason": "blocklist",
+      "text": "brand new p0rn set just dropped for you all",
+      "langs": [
+        "en"
+      ]
+    },
+    {
+      "reason": "reply",
+      "text": "totally agree with everything you said here honestly",
+      "langs": [
+        "en"
+      ],
+      "reply": {
+        "parent": {
+          "uri": "at://x/app.bsky.feed.post/y"
+        },
+        "root": {
+          "uri": "at://x/app.bsky.feed.post/y"
+        }
+      }
+    }
+  ]
+}
