@@ -26,7 +26,9 @@ Open `http://localhost:8765/?replay=1` to run offline from fixtures.
 | `k` | force key change |
 | `t` | text on/off |
 | `h` | hide/show stats |
-| `x` / `Esc` | open / close the mixer drawer (key, scale, lock, tempo, per-voice instrument, level, mute) |
+| `x` / `Esc` | open / close the mixer drawer (key, scale, lock, tempo, drone, master, max texts on screen, per-voice instrument, level, mute) |
+
+Works on phones (tap Play; on iOS flip the ringer switch off silent or WebAudio stays muted). Text shows fewer posts on small screens by default; raise it in the mixer.
 
 ## Deploy
 

@@ -38,6 +38,7 @@ export function defaultMix() {
     bpm: 90,
     drone: 1,
     master: 0.8,
+    texts: coarse ? 6 : 12,
     types: {
       post: { voice: 'pluck', level: 1, mute: false },
       reply: { voice: 'pluck', level: 0.6, mute: false },
@@ -92,6 +93,7 @@ async function start() {
   synth.drone.setLevel(mix.drone);
   visual = new Visual(canvas, { coarse });
   visual.setTextEnabled(state.textOn);
+  visual.setMaxTexts(mix.texts);
   visual.setClockOffset(ctx.currentTime, performance.now());
   visual.setKeyHue(hueForKey(mix.keyRoot));
   synth.drone.setChord(chordAt(0, mix.keyRoot), ctx.currentTime, 0.1);
@@ -101,6 +103,7 @@ async function start() {
   visual.start();
   playEl.remove();
   mixToggle.hidden = false;
+  requestWakeLock();
 
   mixer = buildMixer(mixerEl, { mix, TYPES, VOICES, SCALES, KEY_NAMES, onChange: applyMix, onReset: resetMix });
   mixToggle.addEventListener('click', toggleMixer);
@@ -205,6 +208,7 @@ function applyMix(field) {
     case 'bpm': scheduler.setBpm(mix.bpm); break;
     case 'drone': synth.drone.setLevel(mix.drone); break;
     case 'master': synth.setVolume(mix.master); break;
+    case 'texts': visual.setMaxTexts(mix.texts); break;
     default: break;
   }
   saveMix();
@@ -218,6 +222,7 @@ function resetMix() {
   scheduler.setBpm(mix.bpm);
   synth.drone.setLevel(mix.drone);
   synth.setVolume(mix.master);
+  visual.setMaxTexts(mix.texts);
   saveMix();
   mixer.sync();
   renderStats();
@@ -248,7 +253,7 @@ function renderStats() {
     `${state.connection}${state.host ? ' ' + state.host : ''}`,
     `posts/s ${rates.post.inst.toFixed(0)}  likes/s ${rates.like.inst.toFixed(0)}  reposts/s ${rates.repost.inst.toFixed(0)}  follows/s ${rates.follow.inst.toFixed(0)}`,
     `key ${KEY_NAMES[mix.keyRoot]} ${mix.scale}${mix.lock ? ' (locked)' : ''}  ${scheduler.bpm} bpm  comp ${synth.reduction.toFixed(1)} dB`,
-    `text ${state.textOn ? 'on' : 'off'} (${state.textShown})  dropped ${state.dropped}${state.muted ? '  MUTED' : ''}`,
+    `text ${state.textOn ? `on ≤${mix.texts}` : 'off'} (${state.textShown})  dropped ${state.dropped}${state.muted ? '  MUTED' : ''}`,
   ].join('\n');
 }
 
@@ -272,7 +277,13 @@ function onKey(ev) {
   renderStats();
 }
 
+let wakeLock = null;
+async function requestWakeLock() {
+  try { wakeLock = await navigator.wakeLock?.request('screen'); } catch { wakeLock = null; }
+}
+
 function onVisibility() {
+  if (document.visibilityState === 'visible' && !wakeLock) requestWakeLock();
   if (document.visibilityState === 'visible') {
     ctx.resume().then(() => { scheduler.flush(); scheduler.prime(); visual.setClockOffset(ctx.currentTime, performance.now()); });
   }

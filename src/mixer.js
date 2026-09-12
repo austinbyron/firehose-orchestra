@@ -63,6 +63,9 @@ export function buildMixer(root, { mix, TYPES, VOICES, SCALES, KEY_NAMES, onChan
   r = row();
   label(r, 'master');
   range(r, { min: 0, max: 1, step: 0.02 }, () => mix.master, (v) => { mix.master = v; onChange('master'); }, pct);
+  r = row();
+  label(r, 'text');
+  range(r, { min: 0, max: 20, step: 1 }, () => mix.texts, (v) => { mix.texts = v; onChange('texts'); }, (v) => (v === 0 ? 'off' : `${v}`));
 
   h2('voices');
   for (const t of TYPES) {
