@@ -16,7 +16,8 @@ running, not a dashboard and not a portfolio piece.
 ## Non-goals
 
 - No backend, no accounts, no persistence beyond `localStorage` for mute/volume.
-- No post text is ever displayed (moderation risk, and it's not the point).
+- No handles, avatars, or links are displayed; text only, and only after the
+  strict filter below. No moderation UI (report/block) — this is a viewer.
 - No dependencies: hand-rolled WebAudio, no Tone.js, no CDN scripts.
 - No mixer UI in v1 (candidate for v2).
 
@@ -89,6 +90,44 @@ running, not a dashboard and not a portfolio piece.
   and fade over ~0.6s.
 - Key change: brief full-frame flash and ring rotation.
 - Only voices that were actually scheduled draw (so visual and audio agree).
+
+### Typewriter storm (post text)
+
+- A sample of posts that pass the **strict content filter** type themselves
+  out on the canvas, character by character, starting at their pulse's origin
+  point and in their language's color, then fade over ~4s. Text lands with its
+  note, so reading and hearing agree.
+- Rate: at most one new text per 16th-note bucket and at most ~12 on screen
+  at once; further eligible posts are dropped (not queued) so text never lags
+  the audio.
+- Typing speed scales with text length so every post finishes in ≤2.5s.
+  Truncate at 140 chars with an ellipsis. Newlines collapse to spaces.
+- Layout: word-wrapped to a max width of ~34ch, nudged inside the viewport;
+  a new text that would overlap a live one by more than half its box shifts to
+  the nearest free ring slot, or is skipped if none.
+- Key `t` cycles text mode: typewriter (default) → off. Persisted in
+  `localStorage`.
+
+### Strict content filter (client-side, pure function in `music.js`/`filter.js`)
+
+A post is eligible for display only if ALL hold:
+
+1. No self-labels (`record.labels.values[].val`) in
+   {`porn`, `sexual`, `nudity`, `graphic-media`, `!no-unauthenticated`}.
+2. No `record.embed` of any kind (images, video, external link, quote).
+3. `record.langs` includes `en` (configurable set; default `["en"]`).
+4. No URLs (regex for `https?://` or `\w+\.\w{2,}/` shapes) and no more than
+   two `#hashtags`; no more than one `@mention`.
+5. Text length between 12 and 300 chars after trimming, and not mostly
+   uppercase or mostly emoji/punctuation (ratio checks).
+6. No hit against a bundled blocklist (`src/blocklist.js`, a few hundred
+   slur/adult/spam terms, matched on word boundaries with simple leetspeak
+   normalization). The list is a plain array so it is easy to extend.
+7. Not a reply (keeps standalone thoughts; replies still play their note).
+
+Filtering only gates *display*. Every post still drives audio and pulses.
+Expected pass rate ~5–15% of English posts, which is far more than the
+display budget anyway.
 - Frame budget: retained pulse list capped (~400); oldest dropped first.
 
 ## UI
@@ -99,7 +138,7 @@ running, not a dashboard and not a portfolio piece.
 - Bottom-left stats corner, small monospace: connection state, posts/s,
   likes/s, current key/BPM. Hidden after 5s of no mouse movement.
 - Keys: `m` mute, `f` fullscreen, `[`/`]` BPM ±5, `k` force key change,
-  `h` hide/show stats. Volume and mute persist in `localStorage`.
+  `h` hide/show stats, `t` text mode. Volume and mute persist in `localStorage`.
 - Mobile: works; pulses and voice caps scale down by ~50% when
   `matchMedia('(pointer: coarse)')`.
 
@@ -115,8 +154,9 @@ running, not a dashboard and not a portfolio piece.
 ## Testing
 
 - Pure functions (`hashDid`, `pitchFor`, `bucketFor`, EMA update, burst
-  detector, cap application) live in a small ES module and get unit tests with
-  Node's built-in `node:test`. No bundler; the module is loaded by `index.html`
+  detector, cap application, the strict content filter, text wrapping) live in
+  small ES modules and get unit tests with Node's built-in `node:test`. The
+  filter tests include a fixture set of should-pass / should-block posts. No bundler; the module is loaded by `index.html`
   directly via `<script type="module">`.
 - A `fixtures/` folder holds ~200 recorded Jetstream events for a replay mode
   (`?replay=1`) so the page can be developed and demoed offline at a chosen
@@ -133,6 +173,8 @@ firehose-orchestra/
   src/
     stream.js         Jetstream client, reconnect, rate tracking
     music.js          pure mapping: hash, scale, pitch, caps, EMA, burst
+    filter.js         strict display filter (pure) + text wrap/truncate
+    blocklist.js      plain array of blocked terms
     synth.js          WebAudio voices, drone, master chain
     scheduler.js      lookahead clock, buckets
     visual.js         canvas renderer
@@ -151,5 +193,5 @@ later. No environment variables, no secrets.
 
 ## Open items for v2 (not in scope)
 
-Mixer drawer to remap voices; recording/export of a session; DID watchlist
+Mixer drawer to remap voices; ticker/feed-column text modes; recording/export of a session; DID watchlist
 so followed accounts get a distinct instrument; 24h cursor replay scrubber.
